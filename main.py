@@ -1,22 +1,28 @@
-from logica import cargar_tareas, guardar_tareas
+from src.task_logic import TaskManager
+from src.storage import Storage
+from src.interface import show_menu, get_task_details
 
 def main():
-    tareas = cargar_tareas()
+    manager = TaskManager()
+    storage = Storage()
+
+    # Cargamos tareas previas si existen
+    saved_data = storage.load_tasks()
+    # (Aquí podrías agregar lógica para convertir los dicts guardados en objetos Task de nuevo)
+
     while True:
-        print("\n--- GESTOR DE TAREAS (GitHub Ready) ---")
-        print("1. Ver tareas | 2. Añadir | 3. Salir")
-        opc = input("Selecciona: ")
+        choice = show_menu()
         
-        if opc == '1':
-            for i, t in enumerate(tareas):
-                print(f"{i+1}. {t}")
-        elif opc == '2':
-            nueva = input("Tarea: ")
-            tareas.append(nueva)
-            guardar_tareas(tareas)
-            print("Guardado.")
-        elif opc == '3':
+        if choice == "1":
+            title, desc = get_task_details()
+            manager.add_task(title, desc)
+        elif choice == "2":
+            print(manager.list_tasks())
+        elif choice == "3":
+            storage.save_tasks(manager.get_all_tasks())
+            print("¡Hasta luego!")
             break
 
 if __name__ == "__main__":
     main()
+
